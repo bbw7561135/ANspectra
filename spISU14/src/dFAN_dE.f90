@@ -30,7 +30,7 @@ implicit none
 logical:: &
     dFAN_dE_Init
 real:: &
-    dFAN_dE,AN_SHE_cut
+    dFAN_Intersection,dFAN_dE,AN_SHE_cut
 
 integer,parameter:: &
     Exp  =5,&                                                          !Neutrino experiment number
@@ -38,22 +38,29 @@ integer,parameter:: &
 real,parameter:: &
     Honda11_ini=1.0d-01, Honda11_fin=1.0d+04,&
     HE_ISU_ini =1.0d+01, HE_ISU_fin =1.0d+08,&
-    E_LH=1.0d+01,&                                                     !Boundary between low- and high-energy spectrum application
     firstep=0.01,&
     lastep=100                                                         !Neutrino energy step from the end of spectrum, defined the power tale lean
 character(*),parameter:: &
     SA='max'                                                           !Solar activity
 
 integer &
-    iNuAnu,iFlavor,Mode
+    NuAnu,Flavor,Mode,&
+    iNuAnu,iFlavor
 real &
     F_L_ini,F_L_sec,F_H_pen,F_H_fin,a,b,F0,gamm,&
     E,C
 
 save
 real &
+    E_LH(2,2),&                                                        !Boundary between low- and high-energy spectrum application
     E_L_ini,E_L_sec,E_H_pen,E_H_fin
 
+    do Flavor=1,2
+        do NuAnu=1,2
+            !E_LH(Flavor,NuAnu)=dFAN_Intersection(Flavor,NuAnu,Mode)
+            E_LH(Flavor,NuAnu)=1.0d+04
+        enddo
+    enddo
     write(*,*) 'Atmospheric neutrino model:'
     selectcase(Mode)
         case(1)
@@ -63,10 +70,10 @@ real &
                 E_L_sec=E_L_ini+firstep
                 if(Honda11_fin<HE_ISU_ini)then
                     stop 'dFAN_dE ERROR: Honda11_fin<HE_ISU_ini'
-                elseif(E_LH>Honda11_fin.or.E_LH<HE_ISU_ini)then
-                    write(*,'("dFAN_dE ERROR: E_LH=",1PE8.1,1X,"must be in between")') E_LH
-                    write(*,'("Honda11_fin=",1PE8.1,1X,"and HE_ISU_ini=",1PE8.1)') Honda11_fin,HE_ISU_ini
-                    stop
+                !elseif(E_LH>Honda11_fin.or.E_LH<HE_ISU_ini)then
+                !    write(*,'("dFAN_dE ERROR: E_LH=",1PE8.1,1X,"must be in between")') E_LH
+                !    write(*,'("Honda11_fin=",1PE8.1,1X,"and HE_ISU_ini=",1PE8.1)') Honda11_fin,HE_ISU_ini
+                !    stop
                 endif
                 E_H_fin=HE_ISU_fin
                 E_H_pen=E_H_fin-lastep
@@ -93,7 +100,7 @@ ENTRY dFAN_dE(iFlavor,iNuAnu,E,C,Mode)
                 a=(F_L_sec-F_L_ini)/(E_L_sec-E_L_ini)
                 b=F_L_ini-a*E_L_ini
                 dFAN_dE=a*E+b
-            elseif(E<=E_LH)then
+            elseif(E<=E_LH(iFlavor,iNuAnu))then
                 call AN_Honda(iFlavor,iNuAnu,dFAN_dE,E,C)
             elseif(E<=E_H_fin)then
                 call AN_HE_ISU(iFlavor,iNuAnu,dFAN_dE,E,C)
@@ -110,4 +117,40 @@ ENTRY dFAN_dE(iFlavor,iNuAnu,E,C,Mode)
     return
 !----------------------------------------------------------------------!
 endFUNCTION dFAN_dE_Init
+!**********************************************************************!
+
+
+!**********************************************************************!
+FUNCTION dFAN_Intersection(iFlavor,iNuAnu,Mode)
+!----------------------------------------------------------------------!
+!----------------------------------------------------------------------!
+!edited by                                                    O.Petrova!
+!**********************************************************************!
+implicit none
+
+real:: &
+    dFAN_Intersection
+
+integer &
+    iNuAnu,iFlavor,Mode
+
+    selectcase(Mode)
+        case(1)
+            selectcase(iFlavor)
+                case(1)
+                    selectcase(iNuAnu)
+                        case(1)
+                            dFAN_Intersection=1.0d+04
+                        case(2)
+                            dFAN_Intersection=4.0d+03
+                    endselect
+                case(2)
+                    dFAN_Intersection=1.0d+04
+            endselect
+        case(2)
+            stop 'dFAN_Intersection ERROR: CORT! This case is under construction!'
+    endselect
+    return
+!----------------------------------------------------------------------!
+endFUNCTION dFAN_Intersection
 !**********************************************************************!

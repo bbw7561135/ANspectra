@@ -20,7 +20,7 @@ integer,parameter:: &
 real,parameter:: &
     C_min= 0, C_max= 1
 character(*),parameter:: &
-    usage='Usage: ./spISU14 "outputfile" NuAnu[1,2] Flavor[1,2] Mode[1] E_min[GeV] E_max[GeV]',&
+    usage='Usage: ./spISU14 "outputfile" Flavor[1,2] NuAnu[1,2] Mode[1] E_min[GeV] E_max[GeV]',&
     example='e.g. ./spISU14 "output.dat" 1 2 1 0.1 100'
 logical &
     bufL
@@ -44,14 +44,14 @@ character*1 &
         stop
     endif
     call GetArg(1,outfile)
-    call GetArg(2,arg); read(arg,*) NuAnu
-    call GetArg(3,arg); read(arg,*) Flavor
+    call GetArg(2,arg); read(arg,*) Flavor
+    call GetArg(3,arg); read(arg,*) NuAnu
     call GetArg(4,arg); read(arg,*) Mode
     call GetArg(5,arg); read(arg,*) E_min
     call GetArg(6,arg); read(arg,*) E_max
 !echo------------------------------------------------------------------!
     write(*,*) 'Output to file: ',outfile
-    write(*,'("Set to:",1X,2A1,1X,"in mode",1X,I1)') NAn(NuAnu),Fln(Flavor),Mode
+    write(*,'("Set to:",1X,2A1,1X,"in mode",1X,I1)') Fln(Flavor),NAn(NuAnu),Mode
     write(*,'(2(A6,1PE8.1,1X))') 'E_min=',E_min,'E_max=',E_max
 
     lgE_min=log10(E_min)
