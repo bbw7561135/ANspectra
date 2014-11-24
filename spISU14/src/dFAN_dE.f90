@@ -30,7 +30,7 @@ implicit none
 logical:: &
     dFAN_dE_Init
 real:: &
-    dFAN_Intersection,dFAN_dE,AN_SHE_cut
+    Spectrum_Intersection,dFAN_dE,AN_SHE_cut
 
 integer,parameter:: &
     Exp  =5,&                                                          !Neutrino experiment number
@@ -57,8 +57,7 @@ real &
 
     do Flavor=1,2
         do NuAnu=1,2
-            !E_LH(Flavor,NuAnu)=dFAN_Intersection(Flavor,NuAnu,Mode)
-            E_LH(Flavor,NuAnu)=1.0d+04
+            E_LH(Flavor,NuAnu)=Spectrum_Intersection(Flavor,NuAnu,Mode)
         enddo
     enddo
     write(*,*) 'Atmospheric neutrino model:'
@@ -121,15 +120,16 @@ endFUNCTION dFAN_dE_Init
 
 
 !**********************************************************************!
-FUNCTION dFAN_Intersection(iFlavor,iNuAnu,Mode)
+FUNCTION Spectrum_Intersection(iFlavor,iNuAnu,Mode)
 !----------------------------------------------------------------------!
+!
 !----------------------------------------------------------------------!
 !edited by                                                    O.Petrova!
 !**********************************************************************!
 implicit none
 
 real:: &
-    dFAN_Intersection
+    Spectrum_Intersection
 
 integer &
     iNuAnu,iFlavor,Mode
@@ -140,17 +140,22 @@ integer &
                 case(1)
                     selectcase(iNuAnu)
                         case(1)
-                            dFAN_Intersection=1.0d+04
+                            Spectrum_Intersection=1.0d+04
                         case(2)
-                            dFAN_Intersection=4.0d+03
+                            Spectrum_Intersection=4.0d+03
                     endselect
                 case(2)
-                    dFAN_Intersection=1.0d+04
+                    selectcase(iNuAnu)
+                        case(1)
+                            Spectrum_Intersection=1.0d+04
+                        case(2)
+                            Spectrum_Intersection=4.0d+02
+                    endselect
             endselect
         case(2)
-            stop 'dFAN_Intersection ERROR: CORT! This case is under construction!'
+            stop 'Spectrum_Intersection ERROR: CORT! This case is under construction!'
     endselect
     return
 !----------------------------------------------------------------------!
-endFUNCTION dFAN_Intersection
+endFUNCTION Spectrum_Intersection
 !**********************************************************************!
