@@ -327,6 +327,4 @@
           F0=0
          RETURN
 
-  100 FORMAT((1PE10.8)$)
-
       END SUBROUTINE AN_HE_ISU14

@@ -15,10 +15,10 @@ real:: &
 
 integer,parameter:: &
     Nfsp=140,&
-    NC  =11,&
-    NE  =91
+    NC  =10,&
+    NE  =61
 real,parameter:: &
-    C_min= 0, C_max= 1
+    C_min= 0.05, C_max= 0.95
 character(*),parameter:: &
     usage='Usage: ./spISU14 "outputfile" Flavor[1,2] NuAnu[1,2] Mode[1] E_min[GeV] E_max[GeV]',&
     example='e.g. ./spISU14 "output.dat" 1 2 1 0.1 100'

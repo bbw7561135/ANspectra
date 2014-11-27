@@ -19,10 +19,8 @@ PROGRAMS = spISU14
 # "make" builds all
 all: $(PROGRAMS)
 
-dFAN_dE.o: +PhysMathConstants.o
-AN_Honda11.o: +InpOutUnits.o
-AN_HE_ISU14.o: +PhysMathConstants.o +InpOutUnits.o
-spISU14: +PhysMathConstants.o dFAN_dE.o AN_Honda11.o AN_HE_ISU14.o AN_SHE.o NR_Spline.o
+splectra.o: +PhysMathConstants.o
+spISU14: +PhysMathConstants.o splectra.o AN_spectra.o AN_SHE.o NR_Spline.o
 
 BIN=bin/
 SRC=src/

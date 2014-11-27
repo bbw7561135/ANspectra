@@ -13,8 +13,8 @@ void SetStyle(){
 
 void SIspectra(int nf, int nt){
 	const int stre=10;
-	const int cht=2, chf=2, che=92, cha=12, ched=(che-1)/stre+1;
-	const int col[cha-1]={40,2,4,6,8,46,1,9,11,28,30}, sh[9]={2,7,4,3,1,6,9,8,5};
+	const int cht=2, chf=2, che=62, cha=11, ched=(che-1)/stre+1;
+	const int col[cha-1]={40,2,4,6,8,46,1,9,11,28}, sh[9]={2,7,4,3,1,6,9,8,5};//30
 	const char t[cht]={'n','a'}, f[chf]={'e','m'}, fn[chf][5]={"e","#mu"}, tn[cht][8]={"#nu","#bar#nu"};
 	const char *prefix="./data/", *postfix="E2.dat", *siname="HGm_KM", *hname="Honda";
 	char sifile[256],sifile2[256],pict[256];
@@ -67,9 +67,9 @@ void SIspectra(int nf, int nt){
 		//grsp[0].GetYaxis()->SetRangeUser(2e-3,6e-2);//m
 		grsp[0].GetYaxis()->SetRangeUser(7e-5,3e-2);//e
 		grsp[0].GetXaxis()->SetLimits(7e0,2e4);
-		grsp[0].Draw("AL");
+		grsp[0].Draw("ALP");
 		for(a=1; a<cha-1; a++){
-			grsp[a].Draw("LSAME");
+			grsp[a].Draw("LPSAME");
 		}
 		legname->Draw();
 		//TLegend* legsp=new TLegend(0.8,0.3,0.95,0.75);
