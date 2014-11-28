@@ -6,7 +6,7 @@ implicit none
 logical:: &
     AN_spectra
 integer:: &
-    ArrayIntersect
+    ArrayIntersectF
 real:: &
     AN_Honda_M,AN_HE_ISU,&
     Splin2_mod
@@ -34,8 +34,8 @@ integer &
     in_EI_L(NC_L),in_EI_L_min,in_EI_L_max,n_EI_L_min(NFlavor,NNuAnu),n_EI_L_max(NFlavor,NNuAnu),&
     in_EI_HE_LC(NC_L),in_EI_HE_LC_min,in_EI_HE_LC_max,n_EI_HE_LC_min(NFlavor,NNuAnu),n_EI_HE_LC_max(NFlavor,NNuAnu)
 real &
-    C_L(NC_L), E_L(NE_L), lgE_L(NE_L),&
-    C_H(NC_H), E_H(NE_H), lgE_H(NE_H), T(NC_H+1,NE_H+1),&
+    C_L(NC_L), E_L(NE_L), lgE_L(NE_L), T_L(NC_L+1,NE_L+1),&
+    C_H(NC_H), E_H(NE_H), lgE_H(NE_H), T_H(NC_H+1,NE_H+1),&
     F_L(NFlavor,NNuAnu,NC_L,NE_L), lgF_L(NFlavor,NNuAnu,NC_L,NE_L), ClgF_L(NFlavor,NNuAnu,NC_L,NE_L),&
     F_H(NFlavor,NNuAnu,NC_H,NE_H), lgF_H(NFlavor,NNuAnu,NC_H,NE_H), ClgF_H(NFlavor,NNuAnu,NC_H,NE_H),&
     FM_L(NFlavor,NNuAnu,NC_L,NE_L),lgF_M(NFlavor,NNuAnu,NC_L,NE_L), ClgF_M(NFlavor,NNuAnu,NC_L,NE_L),&
@@ -46,37 +46,46 @@ real &
     E0,C0
 
     open(NFile,file='../input/AN_Honda11.data')
-    do n_NC=NC_L,1,-1
-        read(NFile,*) C_L(n_NC)
-        do n_NE=1,NE_L
-            read(NFile,*) E_L(n_NE),((F_L(Flavor,NuAnu,n_NC,n_NE),NuAnu=1,NNuAnu),Flavor=NFlavor,1,-1)
+    do Flavor=1,NFlavor
+        do NuAnu=1,NNuAnu
+            read(NFile,*) T_L
+            do n_NE=1,NE_L
+                do n_NC=1,NC_L
+                    F_L(Flavor,NuAnu,n_NC,n_NE)=T_L(NC_L+2-n_NC,n_NE+1)
+                enddo
+            enddo
         enddo
     enddo
     close(NFile)
-    write(*,*)' File AN_Honda11.data was read '
-    F_L=F_L*Rescale
+    do n_NC=1,NC_L
+        C_L(n_NC)=T_L(NC_L+2-n_NC,1)
+    enddo
+    do n_NE=1,NE_L
+        E_L(n_NE)=T_L(1,n_NE+1)
+    enddo
+    write(*,*) ' File AN_Honda11.data has been read '
     lgE_L=log10(E_L)
     lgF_L=log10(F_L)
 
     open(NFile,file='../input/AN_HE_ISU14.data')
     do Flavor=1,NFlavor
         do NuAnu=1,NNuAnu
-            read(NFile,*) T
+            read(NFile,*) T_H
             do n_NE=1,NE_H
                 do n_NC=1,NC_H
-                    F_H(Flavor,NuAnu,n_NC,n_NE)=T(NC_H+2-n_NC,n_NE+1)
+                    F_H(Flavor,NuAnu,n_NC,n_NE)=T_H(NC_H+2-n_NC,n_NE+1)
                 enddo
             enddo
         enddo
     enddo
     close(NFile)
     do n_NC=1,NC_H
-        C_H(n_NC)=T(NC_H+2-n_NC,1)
+        C_H(n_NC)=T_H(NC_H+2-n_NC,1)
     enddo
     do n_NE=1,NE_H
-        E_H(n_NE)=T(1,n_NE+1)
+        E_H(n_NE)=T_H(1,n_NE+1)
     enddo
-    write(*,*) ' File AN_HE_ISU14.data was read '
+    write(*,*) ' File AN_HE_ISU14.data has been read '
     lgE_H=log10(E_H)
     lgF_H=log10(F_H)
 
@@ -110,7 +119,7 @@ real &
             enddo
             do n_NC=1,NC_L
                 in_EI_L(n_NC)=n_L_M&
-                +ArrayIntersect(NEM_L,F_L(Flavor,NuAnu,n_NC,n_L_M:NE_L),iFH_L(n_NC,n_L_M:NE_L))-1
+                +ArrayIntersectF(NEM_L,F_L(Flavor,NuAnu,n_NC,n_L_M:NE_L),iFH_L(n_NC,n_L_M:NE_L))-1
                 iEI_L(n_NC)=E_L(in_EI_L(n_NC))
                 do n_NE=1,NE_H
                     if(E_H(n_NE)>=iEI_L(n_NC))then
@@ -200,48 +209,4 @@ ENTRY AN_HE_ISU(iFlavor,iNuAnu,E0,C0)
 !    return
 !----------------------------------------------------------------------!
 endFUNCTION AN_spectra
-!**********************************************************************!
-
-!**********************************************************************!
-FUNCTION ArrayIntersect(N,A1,A2)
-!**********************************************************************!
-implicit none
-
-integer:: &
-    ArrayIntersect
-
-integer &
-    N,n_N
-real &
-    A1(N),A2(N),R(N)
-
-    R=A1-A2
-!    if(R(1)*R(N).eq.0)then
-!        if(R(N).eq.0)then
-!            ArrayIntersect=N
-!        else
-!            ArrayIntersect=0
-!        endif
-!    elseif(R(1)*R(N)>0)then
-!        if(abs(R(1))<abs(R(N)))then
-!            ArrayIntersect=0
-!        else
-!            ArrayIntersect=N
-!        endif
-!    else
-    ArrayIntersect=N
-        do n_N=2,N
-            if((R(n_N-1)*R(n_N)<=0))then
-                ArrayIntersect=n_N-1
-                exit
-            elseif((A1(n_N).ne.0).and.(R(n_N)/A1(n_N)<1d-2))then
-                ArrayIntersect=n_N
-                exit
-            endif
-        enddo
-!    endif
-
-    return
-!----------------------------------------------------------------------!
-endFUNCTION ArrayIntersect
 !**********************************************************************!
