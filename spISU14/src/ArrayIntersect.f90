@@ -9,7 +9,7 @@ integer:: &
     ArrayIntersectF
 
 real,parameter:: &
-    RelDis=1d-2
+    RelDis=0
 integer &
     N,n_N
 real &
@@ -29,8 +29,8 @@ real &
                 ArrayIntersectF=n_N
             endif
             exit
-        elseif(((A1(n_N).ne.0).and.(R(n_N)/A1(n_N)<RelDis))&
-           .or.((A2(n_N).ne.0).and.(R(n_N)/A2(n_N)<RelDis)))then
+        elseif(((A1(n_N).ne.0).and.(abs(R(n_N)/A1(n_N))<RelDis))&
+           .or.((A2(n_N).ne.0).and.(abs(R(n_N)/A2(n_N))<RelDis)))then
             ArrayIntersectF=n_N
             exit
         endif
@@ -72,8 +72,8 @@ real &
                 ArrayIntersectB=n_N
             endif
             exit
-        elseif(((A1(n_N).ne.0).and.(R(n_N)/A1(n_N)<RelDis))&
-           .or.((A2(n_N).ne.0).and.(R(n_N)/A2(n_N)<RelDis)))then
+        elseif(((A1(n_N).ne.0).and.(abs(R(n_N)/A1(n_N))<RelDis))&
+           .or.((A2(n_N).ne.0).and.(abs(R(n_N)/A2(n_N))<RelDis)))then
             ArrayIntersectB=n_N
             exit
         endif
