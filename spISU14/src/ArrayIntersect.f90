@@ -1,8 +1,10 @@
 !**********************************************************************!
 FUNCTION ArrayIntersectF(N,A1,A2)
-!**********************************************************************!
-!Forward
 !----------------------------------------------------------------------!
+!Search of the point where functions given by 1D-arrays A1(N) and A2(N)
+!are intersected or converged closer than RelDis
+!(goes forward)
+!**********************************************************************!
 implicit none
 
 integer:: &
@@ -43,9 +45,11 @@ endFUNCTION ArrayIntersectF
 
 !**********************************************************************!
 FUNCTION ArrayIntersectB(N,A1,A2)
-!**********************************************************************!
-!Backward
 !----------------------------------------------------------------------!
+!Search of the point where functions given by 1D-arrays A1(N) and A2(N)
+!are intersected or converged closer than RelDis
+!(goes backward)
+!**********************************************************************!
 implicit none
 
 integer:: &
