@@ -11,7 +11,7 @@ implicit none
 logical:: &
     dFAN_dE_Init
 real:: &
-    dFAN_dE
+    dFAN_dE_1,dFAN_dE_2
 
 integer,parameter:: &
     Nfsp=140,&
@@ -80,7 +80,7 @@ character*1 &
         E =10**(lgE_min+(n_NE-1)*steplgE)
         E3=E**3
         do n_NC=1,NC
-            PhiE3(n_NC)=dFAN_dE(Flavor,NuAnu,E,Carr(n_NC),Mode)*E3
+            PhiE3(n_NC)=dFAN_dE_1(Flavor,NuAnu,E,Carr(n_NC),Mode)*E3
         enddo
     write(Nfsp,'(14(1PE16.8))') E,PhiE3
     enddo

@@ -30,8 +30,8 @@ implicit none
 logical:: &
     dFAN_dE_Init,AN_spectra
 real:: &
-    dFAN_dE,&
-    Spectrum_Intersection,AN_Honda_M,AN_HE_ISU,AN_SHE_cut
+    dFAN_dE_2,dFAN_dE_1,&
+    AN_Honda,AN_Honda_M,AN_HE_ISU_M,AN_HE_ISU,AN_SHE_cut
 
 integer,parameter:: &
     Exp  =5,&                                                          !Neutrino experiment number
@@ -58,24 +58,15 @@ real &
     E_LH(2,2),&                                                        !Boundary between low- and high-energy spectrum application
     E_L_ini,E_L_sec,E_H_pen,E_H_fin
 
-!    do Flavor=1,2
-!        do NuAnu=1,2
-!            E_LH(Flavor,NuAnu)=Spectrum_Intersection(Flavor,NuAnu,Mode)
-!        enddo
-!    enddo
     write(*,*) 'Atmospheric neutrino model:'
     selectcase(Mode)
         case(1)
             write(*,*) 'AN_Honda11 + AN_HE_ISU + AN_SHE'
-            bufL=AN_spectra()
+            bufL=AN_spectra(1)
                 E_L_ini=Honda11_ini
                 E_L_sec=E_L_ini+firstep
                 if(Honda11_fin<HE_ISU_ini)then
                     stop 'dFAN_dE ERROR: Honda11_fin<HE_ISU_ini'
-                !elseif(E_LH>Honda11_fin.or.E_LH<HE_ISU_ini)then
-                !    write(*,'("dFAN_dE ERROR: E_LH=",1PE8.1,1X,"must be in between")') E_LH
-                !    write(*,'("Honda11_fin=",1PE8.1,1X,"and HE_ISU_ini=",1PE8.1)') Honda11_fin,HE_ISU_ini
-                !    stop
                 endif
                 E_H_fin=HE_ISU_fin
                 E_H_pen=E_H_fin-lastep
@@ -89,25 +80,51 @@ real &
     return
 
 !**********************************************************************!
-ENTRY dFAN_dE(iFlavor,iNuAnu,E,C,Mode)
+ENTRY dFAN_dE_2(iFlavor,iNuAnu,E,C,Mode)
 !----------------------------------------------------------------------!
     selectcase(Mode)
         case(1)
             if(E<0 .or.E>E_GZK)then
-                dFAN_dE=0
+                dFAN_dE_2=0
             elseif(E<E_L_ini)then
-                F_L_ini=AN_Honda_M(iFlavor,iNuAnu,E_L_ini,C)
-                F_L_sec=AN_Honda_M(iFlavor,iNuAnu,E_L_sec,C)
+                F_L_ini=AN_Honda(iFlavor,iNuAnu,E_L_ini,C)
+                F_L_sec=AN_Honda(iFlavor,iNuAnu,E_L_sec,C)
                 a=(F_L_sec-F_L_ini)/(E_L_sec-E_L_ini)
                 b=F_L_ini-a*E_L_ini
-                dFAN_dE=a*E+b
+                dFAN_dE_2=a*E+b
             elseif(E<=E_H_fin)then
-                dFAN_dE=AN_Honda_M(iFlavor,iNuAnu,E,C)
+                dFAN_dE_2=AN_Honda_M(iFlavor,iNuAnu,E,C)
             else
                 F_H_pen=AN_HE_ISU(iFlavor,iNuAnu,E_H_pen,C)
                 F_H_fin=AN_HE_ISU(iFlavor,iNuAnu,E_H_fin,C)
                 call PowerLaw(E_H_pen,E_H_fin,F_H_pen,F_H_fin,gamm,F0)
-                dFAN_dE=F0*E**(-gamm)*AN_SHE_cut(E)
+                dFAN_dE_2=F0*E**(-gamm)*AN_SHE_cut(E)
+        endif
+        case(2)
+            stop 'dFAN_dE ERROR: CORT! This case is under construction!'
+    endselect
+    return
+
+!**********************************************************************!
+ENTRY dFAN_dE_1(iFlavor,iNuAnu,E,C,Mode)
+!----------------------------------------------------------------------!
+    selectcase(Mode)
+        case(1)
+            if(E<0 .or.E>E_GZK)then
+                dFAN_dE_1=0
+            elseif(E<E_L_ini)then
+                F_L_ini=AN_Honda(iFlavor,iNuAnu,E_L_ini,C)
+                F_L_sec=AN_Honda(iFlavor,iNuAnu,E_L_sec,C)
+                a=(F_L_sec-F_L_ini)/(E_L_sec-E_L_ini)
+                b=F_L_ini-a*E_L_ini
+                dFAN_dE_1=a*E+b
+            elseif(E<=E_H_fin)then
+                dFAN_dE_1=AN_HE_ISU_M(iFlavor,iNuAnu,E,C)
+            else
+                F_H_pen=AN_HE_ISU(iFlavor,iNuAnu,E_H_pen,C)
+                F_H_fin=AN_HE_ISU(iFlavor,iNuAnu,E_H_fin,C)
+                call PowerLaw(E_H_pen,E_H_fin,F_H_pen,F_H_fin,gamm,F0)
+                dFAN_dE_1=F0*E**(-gamm)*AN_SHE_cut(E)
         endif
         case(2)
             stop 'dFAN_dE ERROR: CORT! This case is under construction!'
@@ -115,46 +132,4 @@ ENTRY dFAN_dE(iFlavor,iNuAnu,E,C,Mode)
     return
 !----------------------------------------------------------------------!
 endFUNCTION dFAN_dE_Init
-!**********************************************************************!
-
-
-!**********************************************************************!
-FUNCTION Spectrum_Intersection(iFlavor,iNuAnu,Mode)
-!----------------------------------------------------------------------!
-!
-!----------------------------------------------------------------------!
-!edited by                                                    O.Petrova!
-!**********************************************************************!
-implicit none
-
-real:: &
-    Spectrum_Intersection
-
-integer &
-    iNuAnu,iFlavor,Mode
-
-    selectcase(Mode)
-        case(1)
-            selectcase(iFlavor)
-                case(1)
-                    selectcase(iNuAnu)
-                        case(1)
-                            Spectrum_Intersection=1.0d+04
-                        case(2)
-                            Spectrum_Intersection=4.0d+03
-                    endselect
-                case(2)
-                    selectcase(iNuAnu)
-                        case(1)
-                            Spectrum_Intersection=1.0d+04
-                        case(2)
-                            Spectrum_Intersection=4.0d+02
-                    endselect
-            endselect
-        case(2)
-            stop 'Spectrum_Intersection ERROR: CORT! This case is under construction!'
-    endselect
-    return
-!----------------------------------------------------------------------!
-endFUNCTION Spectrum_Intersection
 !**********************************************************************!

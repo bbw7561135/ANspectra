@@ -64,9 +64,9 @@ void SIspectra(int nf, int nt){
 		grsp[0].GetYaxis()->SetTitle("#font[132]{#Phi_{#nu}(E,#theta) E^{3}, GeV^{2}/(cm^{2} s ster)}");
 		//grsp[0].GetYaxis()->SetRangeUser(1e-12,2e-1);
 		//grsp[0].GetYaxis()->SetRangeUser(1e-8,2e-1);
-		//grsp[0].GetYaxis()->SetRangeUser(2e-3,6e-2);//m
-		grsp[0].GetYaxis()->SetRangeUser(7e-5,3e-2);//e
-		grsp[0].GetXaxis()->SetLimits(7e0,2e4);
+		grsp[0].GetYaxis()->SetRangeUser(2e-3,6e-2);//m
+		//grsp[0].GetYaxis()->SetRangeUser(7e-5,3e-2);//e
+		//grsp[0].GetXaxis()->SetLimits(7e0,2e4);
 		grsp[0].Draw("ALP");
 		for(a=1; a<cha-1; a++){
 			grsp[a].Draw("LPSAME");

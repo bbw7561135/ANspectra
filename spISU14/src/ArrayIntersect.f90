@@ -56,7 +56,7 @@ integer:: &
     ArrayIntersectB
 
 real,parameter:: &
-    RelDis=1d-2
+    RelDis=0
 integer &
     N,n_N
 real &
