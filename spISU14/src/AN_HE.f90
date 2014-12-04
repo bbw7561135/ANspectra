@@ -1,6 +1,20 @@
 !**********************************************************************!
 SUBROUTINE AN_HE_ISU14
-!----------------------------------------------------------------------!
+!**********************************************************************!
+!Fluxes of conventional high-energy atmospheric neutrinos and anti-
+!neutrinos as a function of energy and zenith angle.
+!
+!HE_ISU-2014 FLUX in 1/(cm^2 sec sr GeV)
+!
+!Energy range is 10 GeV to 100 PeV
+!Primary cosmic ray spectra: Hilas-Gaisser
+!Hardron interaction model: Kimel-Mokhov
+!
+!The source data array F is dF/dE in units of 1/(cm^2 s sr GeV). The 
+!energy reference points are calculated on the equidistant over lg(E)
+!grid and the reference points for cosine of zenith angle are calculated
+! on equidistant grid from 0 to 1 with step = 0.1
+!**********************************************************************!
 
 use PhysMathConstants, only: E_GZK
 

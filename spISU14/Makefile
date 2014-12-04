@@ -1,7 +1,7 @@
 # the compiler
 FC = gfortran
 # flags for debugging or for maximum performance, comment as necessary
-FCFLAGS = -Wall -g -fPIC
+FCFLAGS = -g -fPIC
 FCFLAGS+= -fdefault-real-8
 FCFLAGS+= -ffpe-trap=invalid,zero,overflow
 #FCFLAGS+= -O2
@@ -20,7 +20,7 @@ PROGRAMS = spISU14
 all: $(PROGRAMS)
 
 splectra.o: +PhysMathConstants.o
-spISU14: +PhysMathConstants.o splectra.o AN_spectra.o ArrayIntersect.o AN_SHE.o NR_Spline.o
+spISU14: +PhysMathConstants.o splectra.o AN_spectra.o ArrayIntersect.o ANS_Preparation.o AN_SHE.o NR_Spline.o
 
 BIN=bin/
 SRC=src/
