@@ -9,23 +9,23 @@ PROGRAM spISU14
 implicit none
 
 logical:: &
-    dFAN_dE_Init
+    ANS_Init
 real:: &
-    dFAN_dE_1,dFAN_dE_2
+    ANS_Constructor
 
 integer,parameter:: &
     Nfsp=140,&
-    NC  =10,&
-    NE  =61
+    NC  =11,&
+    NE  =131
 real,parameter:: &
-    C_min= 0.05, C_max= 0.95
+    C_min= 0., C_max= 1.
 character(*),parameter:: &
-    usage='Usage: ./spISU14 "outputfile" Flavor[1,2] NuAnu[1,2] Mode[1] E_min[GeV] E_max[GeV]',&
-    example='e.g. ./spISU14 "output.dat" 1 2 1 0.1 100'
+    usage='Usage: ./spISU14 "outputfile" Flavor[1,2] NuAnu[1,2] Trans[1,2] Dir[1,2] E_min[GeV] E_max[GeV]',&
+    example='e.g. ./spISU14 "output.dat" 1 2 1 1 0.1 100'
 logical &
     bufL
 integer &
-    NuAnu,Flavor,Mode,n_NC,n_NE
+    Mode,Trans,Dir,NuAnu,Flavor,n_NC,n_NE
 real &
     E,E3,E_min,E_max,lgE_min,lgE_max,stepC,steplgE,&
     Carr(NC)/NC*0/,PhiE3(NC)/NC*0/
@@ -47,11 +47,13 @@ character*1 &
     call GetArg(2,arg); read(arg,*) Flavor
     call GetArg(3,arg); read(arg,*) NuAnu
     call GetArg(4,arg); read(arg,*) Mode
-    call GetArg(5,arg); read(arg,*) E_min
-    call GetArg(6,arg); read(arg,*) E_max
+    call GetArg(5,arg); read(arg,*) Trans
+    call GetArg(6,arg); read(arg,*) Dir
+    call GetArg(7,arg); read(arg,*) E_min
+    call GetArg(8,arg); read(arg,*) E_max
 !echo------------------------------------------------------------------!
     write(*,*) 'Output to file: ',outfile
-    write(*,'("Set to:",1X,2A1,1X,"in mode",1X,I1)') Fln(Flavor),NAn(NuAnu),Mode
+    write(*,'("Set to:",1X,2A1,1X,"in mode",2(1X,I1))') Fln(Flavor),NAn(NuAnu),Trans,Dir
     write(*,'(2(A6,1PE8.1,1X))') 'E_min=',E_min,'E_max=',E_max
 
     lgE_min=log10(E_min)
@@ -63,16 +65,7 @@ character*1 &
         Carr(n_NC)=C_min+(n_NC-1)*stepC
     enddo
 
-    bufL=dFAN_dE_Init(Mode)
-
-    selectcase(Mode)
-        case(1)
-            Sp='H11'; write(*,*) 'AN_Honda11 + AN_ISU_HE + AN_SHE'
-            SA='x'; write(*,*) 'Maximal solar activity'
-        case(2)
-            Sp='CRT'; write(*,*) ' CORTout '
-            SA='n'; write(*,*) ' Minimal solar activity '
-    endselect
+    bufL=ANS_Init(Mode,Trans,Dir)                                      !for Honda11+HE_ISU_14 1,1 is recommended
 
     open(Nfsp,file=outfile)
     write(Nfsp,'(14(1PE16.8))') 0.,Carr
@@ -80,7 +73,7 @@ character*1 &
         E =10**(lgE_min+(n_NE-1)*steplgE)
         E3=E**3
         do n_NC=1,NC
-            PhiE3(n_NC)=dFAN_dE_1(Flavor,NuAnu,E,Carr(n_NC),Mode)*E3
+            PhiE3(n_NC)=ANS_Constructor(Flavor,NuAnu,E,Carr(n_NC),Mode)*E3
         enddo
     write(Nfsp,'(14(1PE16.8))') E,PhiE3
     enddo

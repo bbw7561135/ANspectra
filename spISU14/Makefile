@@ -20,7 +20,7 @@ PROGRAMS = spISU14
 all: $(PROGRAMS)
 
 splectra.o: +PhysMathConstants.o
-spISU14: +PhysMathConstants.o splectra.o AN_spectra.o ArrayIntersect.o ANS_Preparation.o AN_SHE.o NR_Spline.o
+spISU14: +PhysMathConstants.o ANS.o ANS_SmartSpline.o ANS_SplinePreparation.o AN_SHE.o Spectrum_Intersection.o ArrayIntersect.o NR_Spline.o
 
 BIN=bin/
 SRC=src/

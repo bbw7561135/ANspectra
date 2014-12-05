@@ -12,9 +12,9 @@ void SetStyle(){
 }
 
 void SIspectra(int nf, int nt){
-	const int stre=10;
-	const int cht=2, chf=2, che=62, cha=11, ched=(che-1)/stre+1;
-	const int col[cha-1]={40,2,4,6,8,46,1,9,11,28}, sh[9]={2,7,4,3,1,6,9,8,5};//30
+	const int stre=20;
+	const int cht=2, chf=2, che=132, cha=12, ched=(che-1)/stre+1;
+	const int col[cha-1]={40,2,4,6,8,46,1,9,11,28,30}, sh[9]={2,7,4,3,1,6,9,8,5};
 	const char t[cht]={'n','a'}, f[chf]={'e','m'}, fn[chf][5]={"e","#mu"}, tn[cht][8]={"#nu","#bar#nu"};
 	const char *prefix="./data/", *postfix="E2.dat", *siname="HGm_KM", *hname="Honda";
 	char sifile[256],sifile2[256],pict[256];
@@ -62,9 +62,9 @@ void SIspectra(int nf, int nt){
 		//grsp[0].GetYaxis()->SetTitle("#font[132]{#Phi_{#nu}(E,#theta)/#Phi_{#nu}(E,0)}");
 		//grsp[0].GetYaxis()->SetRangeUser(0.05,1.05);
 		grsp[0].GetYaxis()->SetTitle("#font[132]{#Phi_{#nu}(E,#theta) E^{3}, GeV^{2}/(cm^{2} s ster)}");
-		//grsp[0].GetYaxis()->SetRangeUser(1e-12,2e-1);
+		grsp[0].GetYaxis()->SetRangeUser(1e-12,2e-1);
 		//grsp[0].GetYaxis()->SetRangeUser(1e-8,2e-1);
-		grsp[0].GetYaxis()->SetRangeUser(2e-3,6e-2);//m
+		//grsp[0].GetYaxis()->SetRangeUser(2e-3,6e-2);//m
 		//grsp[0].GetYaxis()->SetRangeUser(7e-5,3e-2);//e
 		//grsp[0].GetXaxis()->SetLimits(7e0,2e4);
 		grsp[0].Draw("ALP");
@@ -78,7 +78,7 @@ void SIspectra(int nf, int nt){
 			legsp->AddEntry(&grsp[a-1],Form("#font[132]{%5.2f}",sp[0][a]),"L");
 		}
 		legsp->SetBorderSize(0);
-		//legsp->Draw();
+		legsp->Draw();
 		csp.SetLogx();
 		csp.SetLogy();
 		sprintf(pict,"./pictures/%s_%s_%c%c_spectra.eps",hname,siname,f[nf],t[nt]);
