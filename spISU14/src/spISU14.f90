@@ -15,13 +15,14 @@ real:: &
 
 integer,parameter:: &
     Nfsp=140,&
-    NC  =11,&
-    NE  =131
+    NC  =10,&
+    NE  =61
 real,parameter:: &
-    C_min= 0., C_max= 1.
+    C_min= 0.05, C_max= 0.95
 character(*),parameter:: &
-    usage='Usage: ./spISU14 "outputfile" Flavor[1,2] NuAnu[1,2] Trans[1,2] Dir[1,2] E_min[GeV] E_max[GeV]',&
-    example='e.g. ./spISU14 "output.dat" 1 2 1 1 0.1 100'
+    usage='Usage: ./spISU14 "outputfile" Flavor[1,2] NuAnu[1,2] &
+&Mode[1-simple,2-smart] Trans[1-LtoH,2-HtoL] Dir[1-F,2-B] E_min[GeV] E_max[GeV]',&
+    example='e.g. ./spISU14 "output.dat" 1 2 2 1 1 0.1 100'
 logical &
     bufL
 integer &
