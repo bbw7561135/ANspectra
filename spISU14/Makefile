@@ -19,7 +19,6 @@ PROGRAMS = spISU14
 # "make" builds all
 all: $(PROGRAMS)
 
-splectra.o: +PhysMathConstants.o
 spISU14: +PhysMathConstants.o ANS.o ANS_SmartSpline.o ANS_SplinePreparation.o AN_SHE.o Spectrum_Intersection.o ArrayIntersect.o NR_Spline.o
 
 BIN=bin/
